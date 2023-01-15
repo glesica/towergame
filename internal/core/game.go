@@ -20,6 +20,17 @@ func (g *Game) AddTower(t *tower.State) {
 }
 
 func (g *Game) Update() error {
+	dt := 1.0 / float64(ebiten.TPS())
+
+	for _, t := range g.towers {
+		s := tower.Simple{
+			AimSpeed: 0.3,
+		}
+		s.Update(t, &tower.Instruction{
+			Aim: 1,
+		}, dt)
+	}
+
 	return nil
 }
 
@@ -27,7 +38,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(colornames.Floralwhite)
 
 	for _, t := range g.towers {
-		s := tower.Simple{}
+		s := tower.Simple{
+			AimSpeed: 0.3,
+		}
 		s.Draw(t, screen)
 	}
 }

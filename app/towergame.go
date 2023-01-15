@@ -13,9 +13,9 @@ func main() {
 
 	game := core.NewGame()
 	game.AddTower(&tower.State{
-		Heading:    cp.Vector{1, 0},
-		Position:   cp.Vector{450, 300},
-		TimeToFire: 0,
+		HeadingVector: cp.Vector{1, 0},
+		Position:      cp.Vector{450, 300},
+		TimeToFire:    0,
 	})
 
 	err := ebiten.RunGame(game)
