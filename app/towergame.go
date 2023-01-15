@@ -2,7 +2,9 @@ package main
 
 import (
 	"github.com/glesica/towergame/internal/core"
+	"github.com/glesica/towergame/internal/tower"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/jakecoffman/cp"
 )
 
 func main() {
@@ -10,6 +12,11 @@ func main() {
 	ebiten.SetWindowTitle("Tower Game")
 
 	game := core.NewGame()
+	game.AddTower(&tower.State{
+		Heading:    cp.Vector{1, 0},
+		Position:   cp.Vector{450, 300},
+		TimeToFire: 0,
+	})
 
 	err := ebiten.RunGame(game)
 	if err != nil {
