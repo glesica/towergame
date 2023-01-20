@@ -22,11 +22,22 @@ type State struct {
 	TimeToFire uint
 }
 
+func NewState() *State {
+	s := &State{}
+
+	s.Rotate(0)
+	s.Position = cp.Vector{}
+
+	return s
+}
+
 // Rotate causes the heading angle and heading vector to update to
 // reflect a rotation by the given amount, in radians.
 func (s *State) Rotate(angleDelta float64) {
-	// TODO: This won't work for negative angles, maybe do [-PI, PI)?
 	s.HeadingAngle = math.Mod(s.HeadingAngle+angleDelta, 2*math.Pi)
+	if s.HeadingAngle < 0 {
+		s.HeadingAngle = 2*math.Pi + s.HeadingAngle
+	}
 	s.HeadingVector = cp.Vector{
 		X: math.Cos(s.HeadingAngle),
 		Y: math.Sin(s.HeadingAngle),
