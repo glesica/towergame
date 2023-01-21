@@ -17,9 +17,9 @@ type State struct {
 	// Position is the location of the tower in 2D space.
 	Position cp.Vector
 
-	// The amount of time, in milliseconds, until the tower is ready
+	// The amount of time, in seconds, until the tower is ready
 	// to fire its gun.
-	TimeToFire uint
+	TimeToFire float64
 }
 
 func NewState() *State {

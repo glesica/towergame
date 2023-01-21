@@ -6,7 +6,7 @@ type Instruction struct {
 	Fire bool
 
 	// Aim is the direction the tower should rotate where values
-	// <0 indicate leftward rotation, values >0 indicate rightward
+	// <0 indicate rightward rotation, values >0 indicate leftward
 	// rotation, and 0 indicates no rotation.
 	Aim int
 }
