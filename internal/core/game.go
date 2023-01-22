@@ -6,7 +6,6 @@ import (
 	"github.com/glesica/towergame/internal/tower"
 	"github.com/hajimehoshi/ebiten/v2"
 	"golang.org/x/image/colornames"
-	"math"
 )
 
 type Game struct {
@@ -30,9 +29,7 @@ func (g *Game) AddTower(t *state.Tower) {
 func (g *Game) Update() error {
 	dt := 1.0 / float64(ebiten.TPS())
 
-	s := tower.Simple{
-		AimSpeed: 0.5 * math.Pi,
-	}
+	s := tower.Basic
 
 	w := &state.World{
 		Enemies: g.enemies,
@@ -55,9 +52,7 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(colornames.Floralwhite)
 
-	s := tower.Simple{
-		AimSpeed: 0.3,
-	}
+	s := tower.Basic
 
 	for _, t := range g.towers {
 		s.Draw(t, screen)

@@ -7,7 +7,7 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-var Basic = Enemy{
+var Basic = Composed{
 	Drawers: []Drawer{
 		DrawDot,
 	},
@@ -16,19 +16,19 @@ var Basic = Enemy{
 	},
 }
 
-type Enemy struct {
+type Composed struct {
 	Drawers  []Drawer
 	Updaters []Updater
 }
 
-func (e *Enemy) Draw(state *state.Enemy, screen *ebiten.Image) {
-	for _, d := range e.Drawers {
+func (c *Composed) Draw(state *state.Enemy, screen *ebiten.Image) {
+	for _, d := range c.Drawers {
 		d(state, screen)
 	}
 }
 
-func (e *Enemy) Update(state *state.Enemy, world *state.World, dt float64) {
-	for _, u := range e.Updaters {
+func (c *Composed) Update(state *state.Enemy, world *state.World, dt float64) {
+	for _, u := range c.Updaters {
 		u(state, world, dt)
 	}
 }

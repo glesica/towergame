@@ -15,6 +15,7 @@ func main() {
 
 	t := state.NewTower()
 	t.Position = cp.Vector{X: 450, Y: 300}
+	t.AimSpeed = 0.5
 	game.AddTower(t)
 
 	e := state.NewEnemy()

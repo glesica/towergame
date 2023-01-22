@@ -15,6 +15,10 @@ type Tower struct {
 	// of movement. This should be a unit vector.
 	AimVector cp.Vector
 
+	// AimSpeed is the rate at which the tower can change its
+	// aim angle in radians per second.
+	AimSpeed float64
+
 	// Position is the location of the tower in 2D space.
 	Position cp.Vector
 
