@@ -18,10 +18,6 @@ type Enemy struct {
 	// Position is the location of the tower in 2D space.
 	Position cp.Vector
 
-	// TimeToFire is the amount of time, in seconds, until the tower
-	// is ready to fire its gun.
-	TimeToFire float64
-
 	// MovementSpeed is the rate at which the entity moves, in units
 	// per second.
 	// TODO: Should this be on the updater instead?
