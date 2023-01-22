@@ -2,6 +2,10 @@ package tower
 
 import "github.com/hajimehoshi/ebiten/v2"
 
+type Drawer func(state *State, screen *ebiten.Image)
+
+type Updater func(state *State, inst *Instruction, dt float64)
+
 type T interface {
 	// Draw the tower to the screen.
 	Draw(state *State, screen *ebiten.Image)

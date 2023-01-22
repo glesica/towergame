@@ -8,12 +8,17 @@ import (
 )
 
 type Game struct {
-	towers []*tower.State
+	enemies []*tower.State
+	towers  []*tower.State
 }
 
 func NewGame() *Game {
 	game := &Game{}
 	return game
+}
+
+func (g *Game) AddEnemy(e *tower.State) {
+	g.enemies = append(g.enemies, e)
 }
 
 func (g *Game) AddTower(t *tower.State) {
@@ -28,9 +33,19 @@ func (g *Game) Update() error {
 	}
 
 	for _, t := range g.towers {
+		t.Enemies = g.enemies
+		t.Towers = g.towers
+
 		s.Update(t, &tower.Instruction{
 			Aim: 1,
 		}, dt)
+	}
+
+	for _, e := range g.enemies {
+		e.Enemies = g.enemies
+		e.Towers = g.towers
+
+		tower.Basic.Update(e, nil, dt)
 	}
 
 	return nil
@@ -39,11 +54,16 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(colornames.Floralwhite)
 
+	s := tower.Simple{
+		AimSpeed: 0.3,
+	}
+
 	for _, t := range g.towers {
-		s := tower.Simple{
-			AimSpeed: 0.3,
-		}
 		s.Draw(t, screen)
+	}
+
+	for _, e := range g.enemies {
+		tower.Basic.Draw(e, screen)
 	}
 }
 

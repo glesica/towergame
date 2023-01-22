@@ -12,9 +12,15 @@ func main() {
 	ebiten.SetWindowTitle("Tower Game")
 
 	game := core.NewGame()
-	s := tower.NewState()
-	s.Position = cp.Vector{X: 450, Y: 300}
-	game.AddTower(s)
+
+	t := tower.NewState()
+	t.Position = cp.Vector{X: 450, Y: 300}
+	game.AddTower(t)
+
+	e := tower.NewState()
+	e.Position = cp.Vector{X: 700, Y: 500}
+	e.MovementSpeed = 100
+	game.AddEnemy(e)
 
 	err := ebiten.RunGame(game)
 	if err != nil {
