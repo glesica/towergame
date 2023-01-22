@@ -1,4 +1,4 @@
-package tower
+package state
 
 type Instruction struct {
 	// Whether the tower should fire the next time it is able to do

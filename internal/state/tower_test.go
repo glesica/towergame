@@ -1,4 +1,4 @@
-package tower
+package state
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestState_Rotate(t *testing.T) {
+func TestTower_Rotate(t *testing.T) {
 	for _, c := range []struct {
 		start, delta, end float64
 	}{
@@ -15,10 +15,10 @@ func TestState_Rotate(t *testing.T) {
 		{0.5 * math.Pi, math.Pi, 1.5 * math.Pi},
 		{0.5 * math.Pi, -math.Pi, 1.5 * math.Pi},
 	} {
-		s := NewState()
-		s.HeadingAngle = c.start
+		s := NewTower()
+		s.AimAngle = c.start
 		s.Rotate(c.delta)
-		assert.InDelta(t, c.end, s.HeadingAngle, 0.01, c)
+		assert.InDelta(t, c.end, s.AimAngle, 0.01, c)
 	}
 
 	for _, c := range []struct {
@@ -29,10 +29,10 @@ func TestState_Rotate(t *testing.T) {
 		{math.Pi, -1, 0},
 		{1.5 * math.Pi, 0, -1},
 	} {
-		s := NewState()
-		s.HeadingAngle = c.angle
+		s := NewTower()
+		s.AimAngle = c.angle
 		s.Rotate(0)
-		assert.InDelta(t, c.x, s.HeadingVector.X, 0.01, c)
-		assert.InDelta(t, c.y, s.HeadingVector.Y, 0.01, c)
+		assert.InDelta(t, c.x, s.AimVector.X, 0.01, c)
+		assert.InDelta(t, c.y, s.AimVector.Y, 0.01, c)
 	}
 }

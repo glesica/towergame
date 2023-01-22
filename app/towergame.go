@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/glesica/towergame/internal/core"
-	"github.com/glesica/towergame/internal/tower"
+	"github.com/glesica/towergame/internal/state"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/jakecoffman/cp"
 )
@@ -13,11 +13,11 @@ func main() {
 
 	game := core.NewGame()
 
-	t := tower.NewState()
+	t := state.NewTower()
 	t.Position = cp.Vector{X: 450, Y: 300}
 	game.AddTower(t)
 
-	e := tower.NewState()
+	e := state.NewEnemy()
 	e.Position = cp.Vector{X: 700, Y: 500}
 	e.MovementSpeed = 100
 	game.AddEnemy(e)

@@ -1,6 +1,8 @@
 package core
 
 import (
+	"github.com/glesica/towergame/internal/enemy"
+	"github.com/glesica/towergame/internal/state"
 	"github.com/glesica/towergame/internal/tower"
 	"github.com/hajimehoshi/ebiten/v2"
 	"golang.org/x/image/colornames"
@@ -8,8 +10,8 @@ import (
 )
 
 type Game struct {
-	enemies []*tower.State
-	towers  []*tower.State
+	enemies []*state.Enemy
+	towers  []*state.Tower
 }
 
 func NewGame() *Game {
@@ -17,11 +19,11 @@ func NewGame() *Game {
 	return game
 }
 
-func (g *Game) AddEnemy(e *tower.State) {
+func (g *Game) AddEnemy(e *state.Enemy) {
 	g.enemies = append(g.enemies, e)
 }
 
-func (g *Game) AddTower(t *tower.State) {
+func (g *Game) AddTower(t *state.Tower) {
 	g.towers = append(g.towers, t)
 }
 
@@ -32,20 +34,19 @@ func (g *Game) Update() error {
 		AimSpeed: 0.5 * math.Pi,
 	}
 
-	for _, t := range g.towers {
-		t.Enemies = g.enemies
-		t.Towers = g.towers
+	w := &state.World{
+		Enemies: g.enemies,
+		Towers:  g.towers,
+	}
 
-		s.Update(t, &tower.Instruction{
+	for _, t := range g.towers {
+		s.Update(t, w, &state.Instruction{
 			Aim: 1,
 		}, dt)
 	}
 
 	for _, e := range g.enemies {
-		e.Enemies = g.enemies
-		e.Towers = g.towers
-
-		tower.Basic.Update(e, nil, dt)
+		enemy.Basic.Update(e, w, dt)
 	}
 
 	return nil
@@ -63,7 +64,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	for _, e := range g.enemies {
-		tower.Basic.Draw(e, screen)
+		enemy.Basic.Draw(e, screen)
 	}
 }
 
