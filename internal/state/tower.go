@@ -3,9 +3,16 @@ package state
 import (
 	"github.com/jakecoffman/cp"
 	"math"
+	"sync/atomic"
 )
 
+// TODO: Consider using this as a value type instead of a pointer
+
+var nextTowerID atomic.Uint64
+
 type Tower struct {
+	id uint64
+
 	// AimAngle is the tower's current heading as an angle,
 	// in the interval [0, 2PI) where 0 is pointing east (right).
 	AimAngle float64
@@ -14,10 +21,6 @@ type Tower struct {
 	// direction the gun is pointing or, for enemies, the direction
 	// of movement. This should be a unit vector.
 	AimVector cp.Vector
-
-	// AimSpeed is the rate at which the tower can change its
-	// aim angle in radians per second.
-	AimSpeed float64
 
 	// Position is the location of the tower in 2D space.
 	Position cp.Vector
@@ -28,7 +31,10 @@ type Tower struct {
 }
 
 func NewTower() *Tower {
-	s := &Tower{}
+	id := nextTowerID.Add(1)
+	s := &Tower{
+		id: id,
+	}
 
 	s.Rotate(0)
 	s.Position = cp.Vector{}
@@ -36,21 +42,29 @@ func NewTower() *Tower {
 	return s
 }
 
+func (t *Tower) ID() uint64 {
+	return t.id
+}
+
 // Rotate causes the heading angle and heading vector to update to
 // reflect a rotation by the given amount, in radians.
-func (w *Tower) Rotate(angleDelta float64) {
-	w.AimAngle = math.Mod(w.AimAngle+angleDelta, 2*math.Pi)
-	if w.AimAngle < 0 {
-		w.AimAngle = 2*math.Pi + w.AimAngle
+func (t *Tower) Rotate(angleDelta float64) {
+	t.AimAngle = math.Mod(t.AimAngle+angleDelta, 2*math.Pi)
+	if t.AimAngle < 0 {
+		t.AimAngle = 2*math.Pi + t.AimAngle
 	}
-	w.AimVector = cp.ForAngle(w.AimAngle)
+	t.AimVector = cp.ForAngle(t.AimAngle)
 }
 
 // Toward returns a unit vector pointing from the receiver state,
 // based on its position, to the given position.
-func (w *Tower) Toward(position cp.Vector) cp.Vector {
+func (t *Tower) Toward(position cp.Vector) cp.Vector {
 	return cp.Vector{
-		X: position.X - w.Position.X,
-		Y: position.Y - w.Position.Y,
+		X: position.X - t.Position.X,
+		Y: position.Y - t.Position.Y,
 	}.Normalize()
+}
+
+func (t *Tower) Pos() cp.Vector {
+	return t.Position
 }

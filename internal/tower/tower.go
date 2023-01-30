@@ -11,10 +11,10 @@ type Updater func(state *state.Tower, world *state.World, inst *state.Instructio
 
 type T interface {
 	// Draw the tower to the screen.
-	Draw(state *state.Tower, screen *ebiten.Image)
+	Draw(s *state.Tower, screen *ebiten.Image)
 
 	// Update mutates the given state based on the given instruction
 	// to account for changes that should happen over the given
 	// time delta.
-	Update(state *state.Tower, world *state.World, inst *state.Instruction, dt float64)
+	Update(s *state.Tower, w *state.World, inst *state.Instruction, dt float64)
 }

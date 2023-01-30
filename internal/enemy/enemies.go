@@ -4,15 +4,16 @@ import (
 	"github.com/glesica/towergame/internal/state"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/jakecoffman/cp"
 	"golang.org/x/image/colornames"
 )
 
-var Basic = Composed{
+var Basic = &Composed{
 	Drawers: []Drawer{
-		DrawDot,
+		Dot,
 	},
 	Updaters: []Updater{
-		MoveToNearestTower,
+		MoveToNearestTower(10),
 	},
 }
 
@@ -33,15 +34,32 @@ func (c *Composed) Update(state *state.Enemy, world *state.World, dt float64) {
 	}
 }
 
-func DrawDot(state *state.Enemy, screen *ebiten.Image) {
+// -------
+// Drawers
+// -------
+
+func Dot(state *state.Enemy, screen *ebiten.Image) {
 	pos := state.Position
 	ebitenutil.DrawCircle(screen, pos.X, pos.Y, 5, colornames.Aqua)
 }
 
-func MoveToNearestTower(state *state.Enemy, world *state.World, dt float64) {
-	t := world.NearestTower(state.Position)
-	if t != nil {
-		delta := state.Toward(t.Position).Mult(state.MovementSpeed * dt)
-		state.Position = state.Position.Add(delta)
+// --------
+// Updaters
+// --------
+
+func MoveToNearestTower(speed float64) Updater {
+	return func(s *state.Enemy, w *state.World, dt float64) {
+		t := w.Towers.Nearest(s.Position)
+		if t != nil {
+			delta := s.Toward(t.Position).Mult(speed * dt)
+			s.Position = s.Position.Add(delta)
+		}
+	}
+}
+
+func MoveToPoint(speed float64, point cp.Vector) Updater {
+	return func(s *state.Enemy, w *state.World, dt float64) {
+		delta := s.Toward(point).Mult(speed * dt)
+		s.Position = s.Position.Add(delta)
 	}
 }

@@ -4,19 +4,19 @@ import (
 	"github.com/glesica/towergame/internal/state"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/jakecoffman/cp"
 	"golang.org/x/image/colornames"
 	"math"
 )
 
 // TODO: Need a way to associate States and towers
 
-var Basic = Composed{
+var Basic = &Composed{
 	Drawers: []Drawer{
-		DrawCircles,
+		Circles,
 	},
 	Updaters: []Updater{
-		UpdateAim,
+		Rotate(0.5 * math.Pi),
+		Fire(0.25),
 	},
 }
 
@@ -25,31 +25,55 @@ type Composed struct {
 	Updaters []Updater
 }
 
-func (c *Composed) Draw(state *state.Tower, screen *ebiten.Image) {
+func (c *Composed) Draw(s *state.Tower, screen *ebiten.Image) {
 	for _, d := range c.Drawers {
-		d(state, screen)
+		d(s, screen)
 	}
 }
 
-func (c *Composed) Update(state *state.Tower, world *state.World, inst *state.Instruction, dt float64) {
+func (c *Composed) Update(s *state.Tower, w *state.World, inst *state.Instruction, dt float64) {
 	for _, u := range c.Updaters {
-		u(state, world, inst, dt)
+		u(s, w, inst, dt)
 	}
 }
 
-func DrawCircles(state *state.Tower, screen *ebiten.Image) {
-	pos := state.Position
+// -------
+// Drawers
+// -------
+
+func Circles(s *state.Tower, screen *ebiten.Image) {
+	pos := s.Position
 	ebitenutil.DrawCircle(screen, pos.X, pos.Y, 25, colornames.Aqua)
-	ind := pos.Add(cp.Vector{X: state.AimVector.X, Y: -state.AimVector.Y}.Mult(20))
+	ind := pos.Add(s.AimVector.Mult(20))
 	ebitenutil.DrawCircle(screen, ind.X, ind.Y, 5, colornames.Fuchsia)
 }
 
-func UpdateAim(state *state.Tower, world *state.World, inst *state.Instruction, dt float64) {
-	if inst.Aim < 0 {
-		state.Rotate(-state.AimSpeed * dt)
-	} else if inst.Aim > 0 {
-		state.Rotate(state.AimSpeed * dt)
-	}
+// --------
+// Updaters
+// --------
 
-	state.TimeToFire = math.Max(0, state.TimeToFire-dt)
+func Fire(fireDelay float64) Updater {
+	return func(s *state.Tower, w *state.World, inst *state.Instruction, dt float64) {
+		s.TimeToFire = math.Max(0, s.TimeToFire-dt)
+		if inst.Fire && s.TimeToFire <= 0 {
+			s.TimeToFire = fireDelay
+			b := state.NewBullet()
+			b.Position = s.Position
+			// TODO: Figure out the bullet speed from the tower
+			b.Velocity = s.AimVector.Normalize().Mult(30)
+			// TODO: Figure out the amount of damage from the tower
+			b.Damage = 10
+			w.BulletQueue = append(w.BulletQueue, b)
+		}
+	}
+}
+
+func Rotate(aimSpeed float64) Updater {
+	return func(s *state.Tower, w *state.World, inst *state.Instruction, dt float64) {
+		if inst.Aim < 0 {
+			s.Rotate(-aimSpeed * dt)
+		} else if inst.Aim > 0 {
+			s.Rotate(aimSpeed * dt)
+		}
+	}
 }
